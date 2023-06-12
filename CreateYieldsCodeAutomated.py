@@ -49,7 +49,12 @@ print (chi_strange,chi_light)
 #Now I want to get the particle yields for each files and start formatting them as they will be outputted
 #on the code that will be ran
 ##format enum{lpip, lpim, lkp, lkm, lk0s, lproton, lpbar, llambda, llamdabar, lphi, lxi, lxibar, lomega, lomegabar};
-experimentalYields = "double yield_exp[npart] ={" #%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s};"%((allFile[9].split(","))[3].strip(),
+experimentalYields = "double yield_exp[npart] ={" 
+experimentalYieldErr = "double yield_experr[npart]={"
+twoTempYield = "double modelYield_twocfo[npart] = {" 
+oneTempYield = "double modelYield_onecfo[npart] = {"
+oneTempDev="double dev_1fo[npart] = {"
+twoTempDev="double dev_2fo[npart] = {"
 for index in range(9,len(allFileContent)-1):
   print (index,len(allFileContent))
   
@@ -58,17 +63,53 @@ for index in range(9,len(allFileContent)-1):
     experimentalYields +=","    
     experimentalYields += (allFileContent[index].split(","))[2].strip()
     experimentalYields +=","
+    
+    #now fill up the experimental error side! 
+    experimentalYieldErr += (allFileContent[-1].split(","))[4].strip()
+    experimentalYieldErr += ","
+    experimentalYieldErr += (allFileContent[index].split(","))[4].strip()
+    experimentalYieldErr += ","
+    
+    
+    #now we want to get the model yields for both temperatures :D 
+    oneTempYield += (allFileContent[-1].split(","))[6].strip()
+    oneTempYield += ","
+    oneTempYield += (allFileContent[index].split(","))[6].strip()
+    oneTempYield += ","
+    
+    oneTempDev += (allFileContent[-1].split(","))[8].strip()
+    oneTempDev += ","
+    oneTempDev += (allFileContent[index].split(","))[8].strip()
+    oneTempDev += ","
     allFileContent.pop()
+    
+    #Now the most complicated is the 2 temperature since piKp are from ome 
     continue
   if index == len(allFileContent)-1:
     experimentalYields += (allFileContent[-1].split(","))[2].strip()
     experimentalYields += "};"
+    experimentalYieldErr += (allFileContent[-1].split(","))[4].strip()
+    experimentalYieldErr += "};"
+    oneTempYield += (allFileContent[index].split(","))[6].strip()
+    oneTempYield += "};"
+    oneTempDev += (allFileContent[index].split(","))[8].strip()
+    oneTempDev += "};"
+    
     print (" LAST ENTRY IN FILE DONE")
     continue
   experimentalYields += (allFileContent[index].split(","))[2].strip()
   experimentalYields +=","
+  experimentalYieldErr += (allFileContent[index].split(","))[4].strip()
+  experimentalYieldErr += ","
+  oneTempYield += (allFileContent[index].split(","))[6].strip()
+  oneTempYield += ","
+  oneTempDev += (allFileContent[index].split(","))[8].strip()
+  oneTempDev += ","
  
 print (experimentalYields)
+print (experimentalYieldErr)
+print (oneTempYield)
+print (oneTempDev)
 
 
 
