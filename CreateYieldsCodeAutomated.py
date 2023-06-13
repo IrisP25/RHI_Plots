@@ -59,42 +59,42 @@ for index in range(9,len(allFileContent)-1):
   print (index,len(allFileContent))
   
   if index ==13:
-    experimentalYields += (allFileContent[-1].split(","))[2].strip()
+    experimentalYields += (allFileContent[-2].split(","))[2].strip()
     experimentalYields +=","    
     experimentalYields += (allFileContent[index].split(","))[2].strip()
     experimentalYields +=","
     
     #now fill up the experimental error side! 
-    experimentalYieldErr += (allFileContent[-1].split(","))[4].strip()
+    experimentalYieldErr += (allFileContent[-2].split(","))[4].strip()
     experimentalYieldErr += ","
     experimentalYieldErr += (allFileContent[index].split(","))[4].strip()
     experimentalYieldErr += ","
     
     
     #now we want to get the model yields for both temperatures :D 
-    oneTempYield += (allFileContent[-1].split(","))[6].strip()
+    oneTempYield += (allFileContent[-2].split(","))[6].strip()
     oneTempYield += ","
     oneTempYield += (allFileContent[index].split(","))[6].strip()
     oneTempYield += ","
     
-    oneTempDev += (allFileContent[-1].split(","))[8].strip()
+    oneTempDev += (allFileContent[-2].split(","))[8].strip()
     oneTempDev += ","
     oneTempDev += (allFileContent[index].split(","))[8].strip()
     oneTempDev += ","
-    allFileContent.pop()
+    allFileContent.pop(-2)
     
-    twoTempYield += (strangeFileContent[-1].split(","))[6].strip()
+    twoTempYield += (strangeFileContent[-2].split(","))[6].strip()
     twoTempYield += ","
     twoTempYield += (lightFileContent[index].split(","))[6].strip()
     twoTempYield += ","
     
-    twoTempDev += (strangeFileContent[-1].split(","))[6].strip()
+    twoTempDev += (strangeFileContent[-2].split(","))[8].strip()
     twoTempDev += ","
-    twoTempDev += (lightFileContent[index].split(","))[6].strip()
+    twoTempDev += (lightFileContent[index].split(","))[8].strip()
     twoTempDev += ","
     
-    strangeFileContent.pop()
-    lightFileContent.pop()
+    strangeFileContent.pop(-2)
+    lightFileContent.pop(-2)
     #Now the most complicated is the 2 temperature since piKp are from ome 
     continue
   if index == len(allFileContent)-1:
@@ -143,7 +143,7 @@ print (twoTempDev)
 
 #Now we need to read in the Yield code Fernando gave me. We will modify the lines with the yield inputs as
 #but also the temperature and Chi info from the legends!
-yieldPlot = open(args.inputDirectory+"/Yieldsndevs_39.C")
+yieldPlot = open("/home/idp3/Documents/RHI/Toys/Yieldsndevs_39.C")
 yieldPlotContent = yieldPlot.readlines()
 
 newFile = "YieldPlot"+args.energyForYield+"GeV.C"
@@ -186,9 +186,27 @@ with open(newFile,'w') as outputFile:
             energyLegend[(energyLegend.index('MeV}",'))-1] = args.energyForYield
             energyLegend[(energyLegend.index('MeV}",'))] = 'GeV}",'
             outputFile.writelines((" ".join(energyLegend))+"\n")
+            
+        elif index_out == len(yieldPlotContent)-1:
+            rootFileName="YieldPlot"+args.energyForYield+"GeV.root" 
+            jpgName = "YieldPlot"+args.energyForYield+"GeV.pdf"
+            outputFile.writelines('TFile rootFile("%s","RECREATE"); \n'%(rootFileName))
+            outputFile.writelines("c1->Write();\n")
+            outputFile.writelines("rootFile.Close();")
+            outputFile.writelines('c1->SaveAs("%s"); \n'%(jpgName))
+            outputFile.writelines("}")
+        	
         else:
             outputFile.writelines(yieldPlotContent[index_out])
-        
+
+#rootFileName="YieldPlot"+args.energyForYield+"GeV.root"            
+#outputFile.writelines('"%s","RECREATE"); \n'%(rootFileName))
+#outputFile.writelines("c1->Write();\n")
+#outputFile.writelines("rootFile.Close();")
+
+
+
+    
 outputFile.close()
 
 
