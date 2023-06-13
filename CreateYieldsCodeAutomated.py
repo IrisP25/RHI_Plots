@@ -9,7 +9,7 @@ parser.add_argument("inputDirectory",help="Input config file")
 parser.add_argument("energyForYield",help='Give an energy to analyze')
 
 args = parser.parse_args()
-fileName="STAR_AuAu_"+args.energyForYield
+fileName="STAR_AuAu_"+args.energyForYield+"GeV"
 
 #fistFiles=[]
 #Search for files in which 
@@ -146,9 +146,9 @@ print (twoTempDev)
 yieldPlot = open(args.inputDirectory+"/Yieldsndevs_39.C")
 yieldPlotContent = yieldPlot.readlines()
 
-newFile = "YieldPlot"+args.energyForYield+".C"
+newFile = "YieldPlot"+args.energyForYield+"GeV.C"
 with open(newFile,'w') as outputFile:
-    outputFile.writelines("void YieldPlot"+args.energyForYield+"() \n")
+    outputFile.writelines("void YieldPlot"+args.energyForYield+"GeV() \n")
     for index_out in range(2,len(yieldPlotContent)):
         ##first replace the yield info!!
         if index_out <10:
@@ -180,6 +180,12 @@ with open(newFile,'w') as outputFile:
             strangeTempLegend[(strangeTempLegend.index("MeV,")-1)] = temp_strange
             strangeTempLegend[(strangeTempLegend.index("dof)_{")+3)] = chi_strange+'","L");'
             outputFile.writelines((" ".join(strangeTempLegend))+"\n")
+            
+        elif index_out ==150:
+            energyLegend = yieldPlotContent[150].split()
+            energyLegend[(energyLegend.index('MeV}",'))-1] = args.energyForYield
+            energyLegend[(energyLegend.index('MeV}",'))] = 'GeV}",'
+            outputFile.writelines((" ".join(energyLegend))+"\n")
         else:
             outputFile.writelines(yieldPlotContent[index_out])
         
